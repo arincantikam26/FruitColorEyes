@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+
+    <style>
+         .sliders {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .slider {
+            margin: 10px;
+        }
+    </style>
+
+
+</head>
+<body>
+    
+    <aside>
+        <div class="card sidebar">
+            <div class="card-body">
+                <img src="https://i2.cdn.turner.com/cnnnext/dam/assets/140926165711-john-sutter-profile-image-large-169.jpg" alt="">
+                <nav>
+                    <ul >
+                        <li><a href="#" class="sidebarBtn">Profile</a></li>
+                        <hr class="mb-5"/>
+
+                        <li><a href="#" class="sidebarBtn" style="background-color: #D54335; color: white;">Inspection</a></li>
+                        <li><a href="#" class="sidebarBtn">Monitoring</a></li>
+                        <li><a href="#" class="sidebarBtn">Train Data</a></li>
+
+                        <hr class="mt-5" />
+                        <li><a href="#" class="sidebarBtn" style="background-color: #DC3545; color: white;">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </aside>
+    <main>
+        <div class="card">
+            <h2>Inspection</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <img id="video" src="/video_feed" alt="Video Feed">
+                </div>
+                <div class="col-md-6">
+                    <div class="sliders">
+                        <div class="slider">
+                            <label for="low_h">Low H:</label>
+                            <input type="range" id="low_h" name="low_h" min="0" max="255" value="35" oninput="updateThresholds()">
+                        </div>
+                        <div class="slider">
+                            <label for="low_s">Low S:</label>
+                            <input type="range" id="low_s" name="low_s" min="0" max="255" value="137" oninput="updateThresholds()">
+                        </div>
+                        <div class="slider">
+                            <label for="low_v">Low V:</label>
+                            <input type="range" id="low_v" name="low_v" min="0" max="255" value="161" oninput="updateThresholds()">
+                        </div>
+                        <div class="slider">
+                            <label for="up_h">Up H:</label>
+                            <input type="range" id="up_h" name="up_h" min="0" max="255" value="255" oninput="updateThresholds()">
+                        </div>
+                        <div class="slider">
+                            <label for="up_s">Up S:</label>
+                            <input type="range" id="up_s" name="up_s" min="0" max="255" value="255" oninput="updateThresholds()">
+                        </div>
+                        <div class="slider">
+                            <label for="up_v">Up V:</label>
+                            <input type="range" id="up_v" name="up_v" min="0" max="255" value="255" oninput="updateThresholds()">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <img id="video" src="/mask_feed" alt="Mask Feed">
+                </div>
+            </div>
+           
+            <button onclick="stopCamera()">Stop Camera</button>
+            <button onclick="startCamera()">Start Camera</button>
+
+        </div>
+    </main>
+    <script>
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopCamera();
+            } else {
+                startCamera();
+            }
+        });
+
+        function stopCamera() {
+            fetch('/stop_camera', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    document.getElementById('video').src = ""; // Clear the video feed
+                });
+        }
+
+        function updateThresholds() {
+            const low_h = document.getElementById('low_h').value;
+            const low_s = document.getElementById('low_s').value;
+            const low_v = document.getElementById('low_v').value;
+            const up_h = document.getElementById('up_h').value;
+            const up_s = document.getElementById('up_s').value;
+            const up_v = document.getElementById('up_v').value;
+
+            const formData = new FormData();
+            formData.append('low_h', low_h);
+            formData.append('low_s', low_s);
+            formData.append('low_v', low_v);
+            formData.append('up_h', up_h);
+            formData.append('up_s', up_s);
+            formData.append('up_v', up_v);
+
+            fetch('/update_thresholds', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+              .then(data => console.log(data.message));
+        }
+
+        function startCamera() {
+            fetch('/start_camera', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    document.getElementById('video').src = "/video_feed"; // Restart the video feed
+                });
+        }
+    </script>
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
+</html>
