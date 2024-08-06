@@ -48,39 +48,39 @@
         <div class="card">
             <h2>Inspection</h2>
             <div class="row">
-                <div class="col-md-6">
-                    <img id="video" src="/video_feed" alt="Video Feed">
+                <div class="col-md-3">
+                    <img id="video_feed" src="/video_feed" alt="Video Feed">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="sliders">
                         <div class="slider">
                             <label for="low_h">Low H:</label>
-                            <input type="range" id="low_h" name="low_h" min="0" max="255" value="35" oninput="updateThresholds()">
+                            <input type="range" id="low_h" name="low_h" min="0" max="255" value="35" oninput="updateMask()">
                         </div>
                         <div class="slider">
                             <label for="low_s">Low S:</label>
-                            <input type="range" id="low_s" name="low_s" min="0" max="255" value="137" oninput="updateThresholds()">
+                            <input type="range" id="low_s" name="low_s" min="0" max="255" value="137" oninput="updateMask()">
                         </div>
                         <div class="slider">
                             <label for="low_v">Low V:</label>
-                            <input type="range" id="low_v" name="low_v" min="0" max="255" value="161" oninput="updateThresholds()">
+                            <input type="range" id="low_v" name="low_v" min="0" max="255" value="161" oninput="updateMask()">
                         </div>
                         <div class="slider">
                             <label for="up_h">Up H:</label>
-                            <input type="range" id="up_h" name="up_h" min="0" max="255" value="255" oninput="updateThresholds()">
+                            <input type="range" id="up_h" name="up_h" min="0" max="255" value="255" oninput="updateMask()">
                         </div>
                         <div class="slider">
                             <label for="up_s">Up S:</label>
-                            <input type="range" id="up_s" name="up_s" min="0" max="255" value="255" oninput="updateThresholds()">
+                            <input type="range" id="up_s" name="up_s" min="0" max="255" value="255" oninput="updateMask()">
                         </div>
                         <div class="slider">
                             <label for="up_v">Up V:</label>
-                            <input type="range" id="up_v" name="up_v" min="0" max="255" value="255" oninput="updateThresholds()">
+                            <input type="range" id="up_v" name="up_v" min="0" max="255" value="255" oninput="updateMask()">
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <img id="video" src="/mask_feed" alt="Mask Feed">
+                <div class="col-md-3">
+                    <img id="video_mask" src="/mask_feed?low_h=0&low_s=0&low_v=0&up_h=0&up_s=0&up_v=0" alt="Mask Feed">
                 </div>
             </div>
            
@@ -90,13 +90,18 @@
         </div>
     </main>
     <script>
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                stopCamera();
-            } else {
-                startCamera();
-            }
-        });
+        function updateMask() {
+            const low_h = document.getElementById('low_h').value;
+            const low_s = document.getElementById('low_s').value;
+            const low_v = document.getElementById('low_v').value;
+            const up_h = document.getElementById('up_h').value;
+            const up_s = document.getElementById('up_s').value;
+            const up_v = document.getElementById('up_v').value;
+
+            const video_mask = document.getElementById('video_mask');
+            video_mask.src = `/mask_feed?low_h=${low_h}&low_s=${low_s}&low_v=${low_v}&up_h=${up_h}&up_s=${up_s}&up_v=${up_v}`;
+        }
+
 
         function stopCamera() {
             fetch('/stop_camera', { method: 'POST' })
@@ -107,29 +112,6 @@
                 });
         }
 
-        function updateThresholds() {
-            const low_h = document.getElementById('low_h').value;
-            const low_s = document.getElementById('low_s').value;
-            const low_v = document.getElementById('low_v').value;
-            const up_h = document.getElementById('up_h').value;
-            const up_s = document.getElementById('up_s').value;
-            const up_v = document.getElementById('up_v').value;
-
-            const formData = new FormData();
-            formData.append('low_h', low_h);
-            formData.append('low_s', low_s);
-            formData.append('low_v', low_v);
-            formData.append('up_h', up_h);
-            formData.append('up_s', up_s);
-            formData.append('up_v', up_v);
-
-            fetch('/update_thresholds', {
-                method: 'POST',
-                body: formData
-            }).then(response => response.json())
-              .then(data => console.log(data.message));
-        }
-
         function startCamera() {
             fetch('/start_camera', { method: 'POST' })
                 .then(response => response.json())
@@ -138,6 +120,8 @@
                     document.getElementById('video').src = "/video_feed"; // Restart the video feed
                 });
         }
+
+
     </script>
     
 
