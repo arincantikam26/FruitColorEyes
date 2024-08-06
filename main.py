@@ -20,9 +20,9 @@ class CameraDetect:
         self.cap = cv2.VideoCapture(0)
         self.running = True
         self.frame = None
-        # self.low = np.array([35, 137, 161])
-        # self.up = np.array([255, 255, 255])
-    
+        self.low = np.array([35, 137, 161])
+        self.up = np.array([255, 255, 255])
+
     def get_frame(self):
         if not self.running:
             return None
@@ -31,7 +31,7 @@ class CameraDetect:
             return None
         self.frame = frame
         return frame
-    
+
     def convert_frame_to_bytes(self):
         if self.frame is None:
             return None
@@ -39,23 +39,23 @@ class CameraDetect:
         if not ret:
             return None
         return jpeg.tobytes()
-    
-    def mask_frame(self, low_h, low_s, low_v, up_h, up_s, up_v):
+
+    def mask_frame(self):
         if self.frame is None:
             return None
         hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
-        low = np.array([low_h, low_s, low_v])
-        up = np.array([up_h, up_s, up_v])
-        mask = cv2.inRange(hsv, low, up)
+        low = np.array([35, 137, 161])
+        up = np.array([255, 255, 255])
+        mask = cv2.inRange(hsv, self.low, self.up)
         ret, jpeg = cv2.imencode('.jpg', mask)
         if not ret:
             return None
         return jpeg.tobytes()
-    
+
     def stop(self):
         self.running = False
         self.cap.release()
-    
+
     def start(self):
         self.cap = cv2.VideoCapture(0)
         if not self.cap.isOpened():
@@ -74,17 +74,8 @@ def video_feed():
     return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
 @app.get("/mask_feed")
-def mask_feed(
-    low_h: int = Query(0),
-    low_s: int = Query(0),
-    low_v: int = Query(0),
-    up_h: int = Query(0),
-    up_s: int = Query(0),
-    up_v: int = Query(0),
-):
-    return StreamingResponse(generate_masked_frames(
-        low_h, low_s, low_v, up_h, up_s, up_v
-    ), media_type="multipart/x-mixed-replace; boundary=frame")
+def mask_feed():
+    return StreamingResponse(generate_masked_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
 @app.post("/update_thresholds")
 async def update_thresholds(low_h: int = Form(...), low_s: int = Form(...), low_v: int = Form(...), up_h: int = Form(...), up_s: int = Form(...), up_v: int = Form(...)):
@@ -114,12 +105,12 @@ def generate_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
 
-def generate_masked_frames(lowh, lows, lowv, uph, ups, upv):
+def generate_masked_frames():
     while cam.running:
         frame = cam.get_frame()
         if frame is None:
             continue
-        mask_bytes = cam.mask_frame(lowh, lows, lowv, uph, ups, upv)
+        mask_bytes = cam.mask_frame()
         if mask_bytes is None:
             continue
         yield (b'--frame\r\n'
