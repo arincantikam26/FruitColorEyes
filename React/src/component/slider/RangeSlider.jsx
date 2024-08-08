@@ -15,7 +15,7 @@ const RangeSlider = ({ label, name, min, max, value, onChange, style, disabled }
         value={value}
         onChange={onChange}
         style={style}
-        className="slider-input"
+        className="slider-input form-range"
         disabled={disabled}
       />
       <span className="slider-value">{value}</span>

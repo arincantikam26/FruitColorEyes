@@ -4,10 +4,10 @@ import ApiClient from "../../helpers/Api";
 
 const HSVColorPicker = ({camStatus}) => {
   const [values, setValues] = useState({
-    low_h: 18,
-    low_s: 51,
-    low_v: 55,
-    up_h: 163,
+    low_h: 50,
+    low_s: 50,
+    low_v: 50,
+    up_h: 70,
     up_s: 100,
     up_v: 100,
   });
@@ -19,7 +19,10 @@ const HSVColorPicker = ({camStatus}) => {
       min: 0,
       max: 360,
       value: values.low_h,
-     
+      style: {
+        background:
+          "linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)",
+      },
     },
     {
       label: "S Low",
@@ -27,7 +30,9 @@ const HSVColorPicker = ({camStatus}) => {
       min: 0,
       max: 100,
       value: values.low_s,
-      
+      style: {
+        background: `linear-gradient(to right, gray, hsl(${values.low_h}, 100%, 50%))`,
+      },
     },
     {
       label: "V Low",
@@ -35,7 +40,9 @@ const HSVColorPicker = ({camStatus}) => {
       min: 0,
       max: 100,
       value: values.low_v,
-      
+      style: {
+        background: `linear-gradient(to right, black, hsl(${values.low_h}, ${values.low_s}%, 50%))`,
+      },
     },
     {
       label: "H Up",
@@ -43,7 +50,10 @@ const HSVColorPicker = ({camStatus}) => {
       min: 0,
       max: 360,
       value: values.up_h,
-      
+      style: {
+        background:
+          "linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)",
+      },
     },
     {
       label: "S Up",
@@ -51,7 +61,9 @@ const HSVColorPicker = ({camStatus}) => {
       min: 0,
       max: 100,
       value: values.up_s,
-      
+      style: {
+        background: `linear-gradient(to right, gray, hsl(${values.up_h}, 100%, 50%))`,
+      },
     },
     {
       label: "V Up",
@@ -59,7 +71,9 @@ const HSVColorPicker = ({camStatus}) => {
       min: 0,
       max: 100,
       value: values.up_v,
-     
+      style: {
+        background: `linear-gradient(to right, black, hsl(${values.up_h}, ${values.up_s}%, 50%))`,
+      },
     },
   ];
 

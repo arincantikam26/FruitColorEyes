@@ -31,9 +31,9 @@ class CameraDetect:
         if self.frame is None:
             return None
         hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
-        low = np.array([35, 137, 161])
-        up = np.array([255, 255, 255])
+ 
         mask = cv2.inRange(hsv, self.low, self.up)
+        
         ret, jpeg = cv2.imencode('.jpg', mask)
         if not ret:
             return None
