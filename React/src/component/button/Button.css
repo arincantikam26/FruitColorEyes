@@ -1,0 +1,45 @@
+.btn {
+    padding: 6px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.btnPrimary {
+    background-color: #4956C8;
+    color: #fff;
+}
+
+.btnPrimary:hover {
+    background-color: #444b88;
+    color: #fff;
+}
+
+.btnSecondary {
+    background-color: #ffffff;
+    color: black;
+    border: black 1px solid;
+}
+
+.btnRed {
+    background-color: #FF0018;
+    color: #fff;
+}
+
+.btnRed:hover {
+    background-color: #b90517;
+    color: #fff;
+}
+
+
+.disabled {
+    background-color: #ccc;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+ul li {
+    margin: 10px 0;
+}
