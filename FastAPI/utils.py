@@ -19,7 +19,7 @@ class CameraDetect:
         self.frame = frame
         return frame
 
-    def convert_frame_to_bytes(self):
+    def convert_frame_to_bytes(self): #vidio asli
         if self.frame is None:
             return None
         ret, jpeg = cv2.imencode('.jpg', self.frame)
@@ -27,7 +27,7 @@ class CameraDetect:
             return None
         return jpeg.tobytes()
 
-    def mask_frame(self):
+    def mask_frame(self): #mask
         if self.frame is None:
             return None
         hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)

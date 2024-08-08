@@ -95,14 +95,14 @@ const HSVColorPicker = ({camStatus}) => {
   };
 
 
-  const convertToOpenCV = (h, s, v) => {
+  const convertToOpenCV = (h, s, v) => { //hsv to pyhton
     const h_opencv = Math.round(h / 2);
     const s_opencv = Math.round(s * 2.55);
     const v_opencv = Math.round(v * 2.55);
     return [h_opencv, s_opencv, v_opencv];
   };
 
-  const getBackgroundColor = () => {
+  const getBackgroundColor = () => { //menampilkan warna
     const hsvToRgb = (h, s, v) => {
       s /= 100;
       v /= 100;
